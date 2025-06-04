@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Min Tøjbutik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-white text-gray-800">
+    <header class="bg-black text-white p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Min Tøjbutik</h1>
+      <div id="cart-summary">🛒 0 varer (0 kr)</div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+      <h2 class="text-3xl font-semibold mb-6">Produkter</h2>
+      <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"></div>
+
+      <div class="mt-10 text-center">
+        <button
+          onclick="checkout()"
+          class="bg-green-600 text-white px-6 py-3 rounded-xl text-lg hover:bg-green-700"
+        >
+          Gå til betaling
+        </button>
+      </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white text-center p-4 mt-12">
+      &copy; 2025 Min Tøjbutik. Alle rettigheder forbeholdes.
+    </footer>
+
+    <script>
+      const products = [
+        {
+          id: 1,
+          name: "Basic T-shirt",
+          price: 199,
+          image: "https://via.placeholder.com/400x400.png?text=Basic+T-shirt",
+        },
+        {
+          id: 2,
+          name: "Sweatshirt",
+          price: 349,
+          image: "https://via.placeholder.com/400x400.png?text=Sweatshirt",
+        },
+        {
+          id: 3,
+          name: "Jeans",
+          price: 499,
+          image: "https://via.placeholder.com/400x400.png?text=Jeans",
+        },
+      ];
+
+      const cart = [];
+
+      function updateCartSummary() {
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById("cart-summary").innerText = `🛒 ${cart.length} varer (${total} kr)`;
+      }
+
+      function addToCart(product) {
+        cart.push(product);
+        updateCartSummary();
+      }
+
+      function renderProducts() {
+        const container = document.getElementById("product-list");
+        products.forEach((product) => {
+          const card = document.createElement("div");
+          card.className = "border p-4 rounded-xl shadow hover:shadow-lg";
+          card.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="mb-4 rounded">
+            <h3 class="text-xl font-semibold">${product.name}</h3>
+            <p class="text-gray-600">${product.price} kr</p>
+            <button class="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Læg i kurv</button>
+          `;
+          card.querySelector("button").addEventListener("click", () => addToCart(product));
+          container.appendChild(card);
+        });
+      }
+
+      function checkout() {
+        if (cart.length === 0) {
+          alert("Din kurv er tom!");
+          return;
+        }
+
+        const items = cart.map((item, index) => `${index + 1}. ${item.name} - ${item.price} kr`).join("%0A");
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+        const subject = encodeURIComponent("Bestilling fra Min Tøjbutik");
+        const body = encodeURIComponent(`Hej,\n\nJeg vil gerne bestille følgende:\n\n${items}\n\nTotal: ${total} kr\n\nVenlig hilsen`);
+
+        window.location.href = `mailto:butik@example.com?subject=${subject}&body=${body}`;
+      }
+
+      // Start
+      renderProducts();
+      updateCartSummary();
+    </script>
+  </body>
+</html>
